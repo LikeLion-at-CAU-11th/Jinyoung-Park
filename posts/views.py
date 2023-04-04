@@ -48,3 +48,16 @@ def get_post_all(request):
         )
 
     return JsonResponse({"status": 200, "message": "모든 게시글 조회 성공", "data": post_list})
+def introduction(request):
+    if request.method == "GET":
+        return JsonResponse(
+            {
+                "status": 200,
+                "success": True,
+                "message": "메세지 전달 성공!",
+                "data": [
+                    {"name": "박진영", "age": 24, "major": "Economic"},
+                    {"name": "민병록", "age": 24, "major": "Software"},
+                ],
+            }
+        )

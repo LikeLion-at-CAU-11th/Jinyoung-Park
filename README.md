@@ -41,6 +41,7 @@
 
 ![소개_인사하는 사자](https://user-images.githubusercontent.com/81146131/221498526-e2db6afd-e36d-447c-ab58-58069793bedf.gif)
 
+
 Week 3
 </br>
 <img src="./week3_standard.png">
@@ -52,5 +53,4 @@ Week 4
 <img src="./week4_standard.png">
 </br>
 <img src="./week4_challenge.png">
-
 </div>
