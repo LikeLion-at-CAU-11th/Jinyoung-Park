@@ -59,11 +59,14 @@ DJANGO_APPS = [
 
 PROJECT_APPS = [
     "posts",
+    "account",
 ]
 
 THIRD_PARTY_APPS = []
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+
+AUTH_USER_MODEL = "account.Member"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
