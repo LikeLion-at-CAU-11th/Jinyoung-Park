@@ -106,6 +106,7 @@ def get_post_in_time(request):
                 "writer": item.writer,
                 "content": item.content,
                 "category": item.category,
+                "created_at": item.created_at,
             }
         )
 
