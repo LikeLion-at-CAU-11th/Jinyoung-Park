@@ -89,8 +89,7 @@ def get_post_all(request):
         )
 
     return JsonResponse({"status": 200, "message": "모든 게시글 조회 성공", "data": post_list})
-
-
+    
 @require_http_methods(["GET"])
 def get_post_in_time(request):
     post_in_time = Post.objects.filter(
