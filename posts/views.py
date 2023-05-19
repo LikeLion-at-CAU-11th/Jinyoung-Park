@@ -78,7 +78,7 @@ class CommentDetail(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, post):
-        comment = get_object_or_404(Comment, post=post)
+        comment = Comment.objects.filter(post=post).first()  # first -> 먼저 쓴 댓글 수정~
         serializer = CommentSerializer(comment, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -87,6 +87,6 @@ class CommentDetail(APIView):
             return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, post):
-        comment = get_object_or_404(Comment, post=post)
+        comment = Comment.objects.filter(post=post).first()  # 먼저 쓴 댓글 삭제
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
