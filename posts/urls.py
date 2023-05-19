@@ -10,6 +10,6 @@ urlpatterns = [
     # path("inTime/", get_post_in_time, name="get_post_in_time"),
     path("", PostList.as_view()),
     path("<int:id>/", PostDetail.as_view()),
+    path("<int:post>/comment", CommentDetail.as_view()),  # 입력받는 인자 이름 일치시켜야됨~
     path("comment", CommentList.as_view()),
-    path("comment/<int:post>", CommentDetail.as_view()),  # 입력받는 인자 이름 일치시켜야됨~
 ]
