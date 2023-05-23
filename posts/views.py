@@ -5,177 +5,87 @@ from django.views.decorators.http import require_http_methods
 from .models import Post, Comment
 import json
 
+from .serializers import PostSerializer, CommentSerializer  # import 잊지 말자,,
+
+# APIView를 사용하기 위해 import
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status  # 상태코드를 넘겨줌
+from django.http import Http404
+
 # Create your views here.
 
+class PostList(APIView):  # post는 보통 List(전체)에 넣는다
+    def post(self, request, format=None):  # 이름은 Http 이름으로~ 알아듣기 편하게
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():  # DB는 소중하니까 건드릴 때는 valid 한지 확인해주는게 좋음~^^
+            serializer.save()
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED
+            )  # JSON으로 바꿔주지 않아도 알아서 해줌 so, 그냥 Response()
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def hello_world(request):
-    if request.method == "GET":
-        return JsonResponse(
-            {
-                "status": 200,
-                "success": True,
-                "message": "메세지 전달 성공!",
-                "data": "Hello world\n",
-            }
-        )
-
-
-@require_http_methods(["GET", "PATCH", "DELETE"])
-def post_detail(request, id):
-    if request.method == "GET":
-        post = get_object_or_404(Post, pk=id)
-        category_json = {
-            "id": post.post_id,
-            "writer": post.writer,
-            "content": post.content,
-            "category": post.category,
-        }
-
-        return JsonResponse(
-            {"status": 200, "message": "게시글 조회 성공", "data": category_json}
-        )
-
-    elif request.method == "PATCH":
-        body = json.loads(request.body.decode("utf-8"))
-        update_post = get_object_or_404(Post, pk=id)
-
-        update_post.content = body["content"]
-        update_post.category = body["category"]
-        update_post.save()
-
-        update_post_json = {
-            "id": update_post.post_id,
-            "writer": update_post.writer,
-            "content": update_post.content,
-            "category": update_post.category,
-        }
-
-        return JsonResponse(
-            (
-                {
-                    "status": 200,
-                    "message": "게시글 수정 성공~",
-                    "data": update_post_json,
-                }
-            )
-        )
-
-    elif request.method == "DELETE":
-        delete_post = get_object_or_404(Post, pk=id)
-        delete_post.delete()
-
-        return JsonResponse(
-            {
-                "status": 200,
-                "message": "게시글 삭제 성공~",
-                "data": None,
-            }
-        )
+    def get(self, request, format=None):
+        posts = Post.objects.all()
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
 
 
-@require_http_methods(["GET"])
-def get_post_all(request):
-    post = Post.objects.all()
-    post_list = []
+class PostDetail(APIView):
+    def get(self, request, id):
+        post = get_object_or_404(Post, post_id=id)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
 
-    for item in post:
-        post_list.append(
-            {
-                "id": item.post_id,
-                "writer": item.writer,
-                "content": item.content,
-                "category": item.category,
-            }
-        )
+    def put(self, request, id):
+        post = get_object_or_404(Post, post_id=id)
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    return JsonResponse({"status": 200, "message": "모든 게시글 조회 성공", "data": post_list})
-    
-@require_http_methods(["GET"])
-def get_post_in_time(request):
-    post_in_time = Post.objects.filter(
-        created_at__gte="2023-04-05 22:00",
-        created_at__lte="2023-04-12 19:00",  # 부등호 느낌으로다가 __gte(>=), __lte(<=) 사용해서 구간 사이에 있는 값 가져옴
-    )
-    post_in_time_list = []
-
-    for item in post_in_time:
-        post_in_time_list.append(
-            {
-                "id": item.post_id,
-                "writer": item.writer,
-                "content": item.content,
-                "category": item.category,
-                "created_at": item.created_at,
-            }
-        )
-
-    return JsonResponse(
-        {"status": 200, "message": "시간 사이 게시글 조회 성공", "data": post_in_time_list}
-    )
+    def delete(self, request, id):
+        post = get_object_or_404(Post, post_id=id)
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@require_http_methods(["POST"])
-def create_post(request):
-    body = json.loads(request.body.decode("utf-8"))  # 이해할 수 있는 형식으로 데이터 받아옴
+class CommentList(APIView):
+    def get(self, request, format=None):
+        comments = Comment.objects.all()
+        serializer = CommentSerializer(comments, many=True)
 
-    new_post = Post.objects.create(
-        writer=body["writer"],
-        content=body["content"],
-        category=body["category"],
-    )
-
-    new_post_json = {
-        "id": new_post.post_id,
-        "writer": new_post.writer,
-        "content": new_post.content,
-        "category": new_post.category,
-    }
-
-    return JsonResponse(
-        {"status": 200, "message": "게시글 목록 생성 성공", "data": new_post_json}
-    )
+        return Response(serializer.data)
 
 
-@require_http_methods(["GET", "POST"])
-def comment(request, post_id):
-    if request.method == "GET":
-        comment_all = Comment.objects.filter(post=post_id)
-        comment_json_list = []
+class CommentDetail(APIView):
+    def get(self, request, post):
+        comments = Comment.objects.filter(post=post)  # FK로 가져옴
+        serializer = CommentSerializer(comments, many=True)
 
-        for comment in comment_all:
-            comment_json = {
-                "writer": comment.writer,
-                "content": comment.content,
-            }
-            comment_json_list.append(comment_json)
+        return Response(serializer.data)
 
-        return JsonResponse(
-            {
-                "status": 200,
-                "message": "comment 읽어오기 성공",
-                "data": comment_json_list,
-            }
-        )
+    def post(self, request, post):
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == "POST":
-        post = get_object_or_404(Post, pk=post_id)
-        body = json.loads(request.body.decode("utf-8"))
+    def put(self, request, post):
+        comment = Comment.objects.filter(post=post).first()  # first -> 먼저 쓴 댓글 수정~
+        serializer = CommentSerializer(comment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
-        new_comment = Comment.objects.create(
-            writer=body["writer"],
-            content=body["content"],
-            post=post,  # Post의 값이 들어와야 함 so, 그냥 숫자를 넣으면 안되고 쿼리셋을 이용해서 원하는 pk(post_id)의 post를 불러와 사용하자,,(pk인 아이디만 가져오는 것이 아니라 pk에 해당하는 테이블 전체를 불러와야 하는듯...? 맞나..?)
-        )
-
-        new_comment_json = {
-            "writer": new_comment.writer,
-            "content": new_comment.content,
-        }
-
-        return JsonResponse(
-            {
-                "status": 200,
-                "message": "comment 생성 성공",
-                "data": new_comment_json,
-            }
-        )
+    def delete(self, request, post):
+        comment = Comment.objects.filter(post=post).first()  # 먼저 쓴 댓글 삭제
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

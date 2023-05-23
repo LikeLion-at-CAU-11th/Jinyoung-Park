@@ -59,4 +59,12 @@
 </br></br>
 <img src="./week5_challenge.png">
 </br></br>
+<h3>Week 8</h3>
+</br></br>
+<img src="./week8_standard.png">
+</br></br>
+<img src="./week8_challenge_1.png">
+</br></br>
+<img src="./week8_challenge_2.png">
+</br></br>
 </div>
