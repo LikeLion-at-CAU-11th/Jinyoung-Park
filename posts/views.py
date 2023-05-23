@@ -15,7 +15,6 @@ from django.http import Http404
 
 # Create your views here.
 
-
 class PostList(APIView):  # post는 보통 List(전체)에 넣는다
     def post(self, request, format=None):  # 이름은 Http 이름으로~ 알아듣기 편하게
         serializer = PostSerializer(data=request.data)
