@@ -4,7 +4,7 @@ from .models import Post, Comment
 
 # Post table
 class PostSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta:  # 내부 데이터 접근할 때 사용
         model = Post
 
         fields = "__all__"  # 다 가져옴~
