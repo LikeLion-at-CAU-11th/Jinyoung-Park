@@ -13,45 +13,52 @@ from rest_framework.response import Response
 from rest_framework import status  # 상태코드를 넘겨줌
 from django.http import Http404
 
+# 인가
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from config.permissions import IsWriterOrReadOnly
 # Create your views here.
 
+
 # DRF~
-# class PostList(APIView):  # post는 보통 List(전체)에 넣는다
-#     def post(self, request, format=None):  # 이름은 Http 이름으로~ 알아듣기 편하게
-#         serializer = PostSerializer(data=request.data)
-#         if serializer.is_valid():  # DB는 소중하니까 건드릴 때는 valid 한지 확인해주는게 좋음~^^
-#             serializer.save()
-#             return Response(
-#                 serializer.data, status=status.HTTP_201_CREATED
-#             )  # JSON으로 바꿔주지 않아도 알아서 해줌 so, 그냥 Response()
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class PostList(APIView):  # post는 보통 List(전체)에 넣는다
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-#     def get(self, request, format=None):
-#         posts = Post.objects.all()
-#         serializer = PostSerializer(posts, many=True)
-#         return Response(serializer.data)
+    def post(self, request, format=None):  # 이름은 Http 이름으로~ 알아듣기 편하게
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():  # DB는 소중하니까 건드릴 때는 valid 한지 확인해주는게 좋음~^^
+            serializer.save()
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED
+            )  # JSON으로 바꿔주지 않아도 알아서 해줌 so, 그냥 Response()
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        posts = Post.objects.all()
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
 
 
-# class PostDetail(APIView):
-#     def get(self, request, id):
-#         post = get_object_or_404(Post, post_id=id)
-#         serializer = PostSerializer(post)
-#         return Response(serializer.data)
+class PostDetail(APIView):
+    permission_classes = [IsWriterOrReadOnly]
+    def get(self, request, id):
+        post = get_object_or_404(Post, post_id=id)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
 
-#     def put(self, request, id):
-#         post = get_object_or_404(Post, post_id=id)
-#         serializer = PostSerializer(post, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, id):
+        post = get_object_or_404(Post, post_id=id)
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#     def delete(self, request, id):
-#         post = get_object_or_404(Post, post_id=id)
-#         post.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, id):
+        post = get_object_or_404(Post, post_id=id)
+        post.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # class CommentList(APIView):
@@ -144,9 +151,9 @@ from django.http import Http404
 from rest_framework import viewsets
 
 
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
+# class PostViewSet(viewsets.ModelViewSet):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
 
 
 class CommentViewSet(viewsets.ModelViewSet):
