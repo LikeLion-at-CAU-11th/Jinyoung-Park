@@ -43,41 +43,41 @@
 
 <h3>Week 3</h3>
 </br></br>
-<img src="./week3_standard.png">
+<img src="png/week3_standard.png">
 </br></br>
-<img src="./week3_challenge.png">
+<img src="png/week3_challenge.png">
 </br></br>
 <h3>Week 4</h3>
 </br></br>
-<img src="./week4_standard.png">
+<img src="png/week4_standard.png">
 </br></br>
-<img src="./week4_challenge.png">
+<img src="png/week4_challenge.png">
 </br></br>
 <h3>Week 5</h3>
 </br></br>
-<img src="./week5_standard.png">
+<img src="png/week5_standard.png">
 </br></br>
-<img src="./week5_challenge.png">
+<img src="png/week5_challenge.png">
 </br></br>
 <h3>Week 8</h3>
 </br></br>
-<img src="./week8_standard.png">
+<img src="png/week8_standard.png">
 </br></br>
-<img src="./week8_challenge_1.png">
+<img src="png/week8_challenge_1.png">
 </br></br>
-<img src="./week8_challenge_2.png">
+<img src="png/week8_challenge_2.png">
 </br></br>
 <h3>Week 9</h3>
 </br></br>
-<img src="./week9_standard.png">
+<img src="png/week9_standard.png">
 </br></br>
-<img src="./week9_challenge_1.png">
+<img src="png/week9_challenge_1.png">
 </br></br>
-<img src="./week9_challenge_2.png">
+<img src="png/week9_challenge_2.png">
 </br></br>
 <h3>Week 10</h3>
 </br></br>
-<img src="./week10_standard.png">
+<img src="png/week10_standard.png">
 </br></br>
 </div>
 
