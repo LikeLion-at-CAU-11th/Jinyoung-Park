@@ -52,9 +52,11 @@ class AuthSerializer(serializers.ModelSerializer):
         username = data.get("username", None)
         password = data.get("password", None)
 
+        # Member DB에서 요청의 username과 일치하는 데이터가 존재하는지 확인함
         if Member.objects.filter(username=username).exists():
             member = Member.objects.get(username=username)
 
+            # DB에 해당 데이터가 존재하는데 password가 일치하지 않는 경우
             if not member.check_password(password):
                 raise serializers.ValidationError("wrong password")
         else:
