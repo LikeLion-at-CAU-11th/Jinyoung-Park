@@ -8,8 +8,8 @@ postRouter = DefaultRouter()
 # postRouter.register("", PostViewSet, basename="Post")  # 이미 posts/를 해놔서 prefix 필요 없음
 
 # key값을 받기 위해서 라우터 분리
-commentRouter = DefaultRouter()
-commentRouter.register("", CommentViewSet, basename="Comment")  # 라우터 분리하면 basename 필요
+# commentRouter = DefaultRouter()
+# commentRouter.register("", CommentViewSet, basename="Comment")  # 라우터 분리하면 basename 필요
 
 
 urlpatterns = [

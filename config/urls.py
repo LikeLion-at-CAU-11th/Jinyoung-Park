@@ -22,5 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("posts/", include("posts.urls")),  # RESTful 하게
-    path("account/", include("account.urls")),
+    path("accounts/", include("accounts.urls")),
+    path("accounts/", include("dj_rest_auth.urls")), # 기능을 url에 include 한다는 뜻
+    path("accounts/", include("allauth.urls")),
 ]
