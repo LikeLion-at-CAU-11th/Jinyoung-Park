@@ -167,7 +167,7 @@ def google_callback(request):
 
         # 이미 Google로 제대로 가입된 유저 => 로그인 & 해당 우저의 jwt 발급
         data = {"access_token": access_token, "code": code}
-        accept = requests.post(f"{BASE_URL}api/user/google/login/finish/", data=data)
+        accept = requests.post(f"{BASE_URL}accounts/google/login/finish/", data=data)
         accept_status = accept.status_code
 
         # 뭔가 중간에 문제가 생기면 에러
@@ -181,7 +181,7 @@ def google_callback(request):
     except Member.DoesNotExist:
         # 전달받은 이메일로 기존에 가입된 유저가 아예 없으면 => 새로 회원가입 & 해당 유저의 jwt 발급
         data = {"access_token": access_token, "code": code}
-        accept = requests.post(f"{BASE_URL}api/user/google/login/finish/", data=data)
+        accept = requests.post(f"{BASE_URL}accounts/google/login/finish/", data=data)
         accept_status = accept.status_code
 
         # 뭔가 중간에 문제가 생기면 에러
@@ -200,12 +200,12 @@ def google_callback(request):
         )
 
 
-# from dj_rest_auth.registration.views import SocialLoginView
-# from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-# from allauth.socialaccount.providers.google import views as google_view
+from dj_rest_auth.registration.views import SocialLoginView
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from allauth.socialaccount.providers.google import views as google_view
 
 
-# class GoogleLogin(SocialLoginView):
-#     adapter_class = google_view.GoogleOAuth2Adapter
-#     callback_url = GOOGLE_CALLBACK_URI
-#     client_class = OAuth2Client
+class GoogleLogin(SocialLoginView):
+    adapter_class = google_view.GoogleOAuth2Adapter
+    callback_url = GOOGLE_CALLBACK_URI
+    client_class = OAuth2Client
