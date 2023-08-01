@@ -1,6 +1,20 @@
 from rest_framework import serializers
 from .models import Post, Comment
 
+from config import settings
+import boto3
+from botocore.exceptions import ClientError
+
+
+# 이미지 검사
+def is_image(image):
+    file_extentions = ["jpg", "jpeg", "png", "gif"]
+    file_extention = image.name.split(".")[-1].lower()
+
+    if file_extention not in file_extentions:
+        return False
+    return True
+
 
 # Post table
 class PostSerializer(serializers.ModelSerializer):
@@ -8,6 +22,37 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
 
         fields = "__all__"  # 다 가져옴~
+
+    # 유효한 이미지 파일인지 확인용
+    def validate(self, data):
+        image = data.get("thumbnail")
+        if not is_image(image):
+            raise serializers.ValidationError("이미지 파일이 아닙니다.")
+        else:
+            s3_url = self.save_image(image)
+            if not s3_url:
+                raise serializers.ValidationError("무효한 이미지 파일입니다.")
+            data["thumbnail"] = s3_url
+        return data
+
+    def save_image(self, image):
+        try:
+            s3 = boto3.client(
+                "s3",
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                region_name=settings.AWS_REGION,
+            )
+            bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+            file_path = image.name
+            # 업로드
+            s3.upload_fileobj(image, bucket_name, file_path)
+
+            s3_url = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{file_path}"
+            return s3_url
+        except:
+            print("s3 upload error")
+            return None
 
 
 # Comment table
