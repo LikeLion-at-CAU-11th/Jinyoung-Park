@@ -16,6 +16,7 @@ from django.http import Http404
 # 인가
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from config.permissions import IsWriterOrReadOnly
+
 # Create your views here.
 
 
@@ -24,7 +25,7 @@ class PostList(APIView):  # post는 보통 List(전체)에 넣는다
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request, format=None):  # 이름은 Http 이름으로~ 알아듣기 편하게
-        request.data['writer'] = request.user.id # 로그인 되어 있는 유저
+        request.data["writer"] = request.user.id  # 로그인 되어 있는 유저
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():  # DB는 소중하니까 건드릴 때는 valid 한지 확인해주는게 좋음~^^
             serializer.save()
@@ -42,7 +43,7 @@ class PostList(APIView):  # post는 보통 List(전체)에 넣는다
 
 class PostDetail(APIView):
     permission_classes = [IsWriterOrReadOnly]
-    
+
     def get(self, request, id):
         post = get_object_or_404(Post, post_id=id)
         serializer = PostSerializer(post)
@@ -50,8 +51,8 @@ class PostDetail(APIView):
 
     def put(self, request, id):
         post = get_object_or_404(Post, post_id=id)
-        request.data['writer'] = request.user.id
-        self.check_object_permissions(request, post) # 작성자가 같은지 체크
+        request.data["writer"] = request.user.id
+        self.check_object_permissions(request, post)  # 작성자가 같은지 체크
         serializer = PostSerializer(post, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -61,8 +62,8 @@ class PostDetail(APIView):
 
     def delete(self, request, id):
         post = get_object_or_404(Post, post_id=id)
-        request.data['writer'] = request.user.id
-        self.check_object_permissions(request, post) # 작성자가 같은지 체크
+        request.data["writer"] = request.user.id
+        self.check_object_permissions(request, post)  # 작성자가 같은지 체크
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
